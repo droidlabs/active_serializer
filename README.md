@@ -18,8 +18,8 @@ Or install it yourself as:
 
 ## Usage
 
-Example serializer:
-
+Here's an example serializer:
+```ruby
 class ContactSerializer
   include ActiveSerializer::Serializable
 
@@ -42,10 +42,15 @@ class ContactSerializer
     end
   end
 end
+```
 
+Let's use it:
+```ruby
 ContactSerializer.serialize(contact, home_address, contact_emails)
+```
 
-Output:
+And we get a result:
+```ruby
 {
   "first_name" => "John",
   "last_name" => "Smith",
@@ -60,6 +65,7 @@ Output:
     { "email" => "test2@test.com", "type" => "home" }
   ]
 }
+```
 
 ## Contributing
 
