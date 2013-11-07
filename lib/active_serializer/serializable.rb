@@ -1,3 +1,5 @@
+require 'active_serializer/serializer'
+
 module ActiveSerializer::Serializable
   extend ActiveSupport::Concern
 

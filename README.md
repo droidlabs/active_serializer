@@ -21,6 +21,8 @@ Or install it yourself as:
 Example serializer:
 
 class ContactSerializer
+  include ActiveSerializer::Serializable
+
   serialization_rules do |contact, home_address, contact_emails|
     attributes :first_name, :last_name, contact
 
@@ -40,6 +42,24 @@ class ContactSerializer
     end
   end
 end
+
+ContactSerializer.serialize(contact, home_address, contact_emails)
+
+Output:
+{
+  "first_name" => "John",
+  "last_name" => "Smith",
+  "full_name" => "John Smith",
+  "address" => {
+    "country" => "Russia",
+    "city" => "Kazan",
+    "street" => "Kosmonavton"
+  },
+  "emails" => [
+    { "email" => "test@test.com", "type" => "home" },
+    { "email" => "test2@test.com", "type" => "home" }
+  ]
+}
 
 ## Contributing
 

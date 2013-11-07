@@ -13,14 +13,14 @@ class ActiveSerializer::Serializer
   end
 
   def resource(name, object = nil, &block)
-    raise "You should set name for resource" if name.blank?
+    raise "You should set name for resource" unless name
     raise "You should specify object" if @object.nil? && object.nil?
     nested_name = name.to_s
     nested_object = object || @object.send(nested_name)
-    if nested_object.blank?
+    unless nested_object
       self.attrs[nested_name] = {}
     else
-      if block.present?
+      if block_given?
         self.attrs[nested_name] = nested_resource(nested_name, nested_object, @options, &block)
       elsif nested_object.respond_to?(:to_hash)
         self.attrs[nested_name] = nested_object.to_hash
@@ -36,7 +36,7 @@ class ActiveSerializer::Serializer
     raise "You should specify object" if @object.nil? && objects.nil?
     objects = objects.flatten unless objects.nil?
     nested_objects = objects || @object.send(name.to_s)
-    if nested_objects.blank?
+    unless nested_objects
       self.attrs[name.to_s] = []
     else
       self.attrs[name.to_s] = (nested_objects || []).inject([]) do |result, obj|
@@ -51,7 +51,7 @@ class ActiveSerializer::Serializer
       object = attrs.last
       attrs.delete(attrs.last)
     end
-    if @object.blank? && object.blank?
+    if !@object && !object
       raise ArgumentError, "Object was not specified"
     end
 
@@ -76,9 +76,9 @@ class ActiveSerializer::Serializer
   protected
 
   def nested_resource(name, object, options, &block)
-    return nil if !object || object.blank?
+    return nil if !object
     serializer = self.class.new(object, options)
-    if block.present?
+    if block_given?
       serializer.instance_exec(object, &block)
       serializer.attrs
     else
