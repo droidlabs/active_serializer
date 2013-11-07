@@ -19,6 +19,7 @@ Or install it yourself as:
 ## Usage
 
 Example serializer:
+
 class ContactSerializer
   serialization_rules do |contact, home_address, contact_emails|
     attributes :first_name, :last_name, contact
