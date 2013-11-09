@@ -1,20 +1,6 @@
 # ActiveSerializer
 
-TODO: Write a gem description
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-    gem 'active_serializer'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install active_serializer
+Active Serializer is a simple objects to hash serializer.
 
 ## Usage
 
@@ -66,6 +52,20 @@ And we get a result:
   ]
 }
 ```
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+    gem 'active_serializer'
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install active_serializer
 
 ## Contributing
 
