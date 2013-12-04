@@ -15,7 +15,7 @@ class ActiveSerializer::Serializer
   def resource(name, object = nil, &block)
     raise "You should set name for resource" unless name
     raise "You should specify object" if @object.nil? && object.nil?
-    nested_name = name.to_s
+    nested_name = name
     nested_object = object || @object.send(nested_name)
     unless nested_object
       self.attrs[nested_name] = {}
@@ -37,9 +37,9 @@ class ActiveSerializer::Serializer
     objects = objects.flatten unless objects.nil?
     nested_objects = objects || @object.send(name.to_s)
     unless nested_objects
-      self.attrs[name.to_s] = []
+      self.attrs[name] = []
     else
-      self.attrs[name.to_s] = (nested_objects || []).inject([]) do |result, obj|
+      self.attrs[name] = (nested_objects || []).inject([]) do |result, obj|
         resource = nested_resource(name, obj, @options, &block)
         resource.empty? ? result : (result << resource)
       end
@@ -57,20 +57,20 @@ class ActiveSerializer::Serializer
 
     target = object || @object
     Array.wrap(attrs).flatten.each do |attribute|
-      self.attrs[attribute.to_s] = target.send(attribute.to_s)
+      self.attrs[attribute] = target.send(attribute.to_s)
     end
   end
 
   def attribute(attr, val = nil, &block)
     if block_given?
-      self.attrs[attr.to_s] = yield
+      self.attrs[attr] = yield
       return
     end
 
     if @object.blank?
       raise ArgumentError, "Neither object was specified nor block was given"
     end
-    self.attrs[attr.to_s] = val || @object.send(attr.to_s)
+    self.attrs[attr] = val || @object.send(attr.to_s)
   end
 
   protected

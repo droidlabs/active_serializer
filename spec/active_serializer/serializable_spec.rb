@@ -56,17 +56,17 @@ describe ActiveSerializer::Serializable do
 
       serialized_contact = ContactSerializer.serialize(contact, home_address, contact_emails)
       serialized_contact.should == {
-        "first_name" => "John",
-        "last_name" => "Smith",
-        "full_name" => "John Smith",
-        "address" => {
-          "country" => "Russia",
-          "city" => "Kazan",
-          "street" => "Kosmonavton"
+        first_name: "John",
+        last_name: "Smith",
+        full_name: "John Smith",
+        address: {
+          country: "Russia",
+          city: "Kazan",
+          street: "Kosmonavton"
         },
-        "emails" => [
-          { "email" => "test@test.com", "type" => "home" },
-          { "email" => "test2@test.com", "type" => "home" }
+        emails: [
+          { email: "test@test.com", type: "home" },
+          { email: "test2@test.com", type: "home" }
         ]
       }
     end
