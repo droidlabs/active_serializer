@@ -21,7 +21,7 @@ module ActiveSerializer::Serializable
     end
 
     def serialize_all(collection)
-      collection.each do |object|
+      collection.map do |object|
         serialize(object)
       end
     end
