@@ -20,6 +20,12 @@ module ActiveSerializer::Serializable
       end
     end
 
+    def serialize_all(collection)
+      collection.each do |object|
+        serialize(object)
+      end
+    end
+
     def serialization_rules(options = {}, &block)
       self.class_variable_set(:@@serialization_options, options)
       self.class_variable_set(:@@serialization_rules, block)
