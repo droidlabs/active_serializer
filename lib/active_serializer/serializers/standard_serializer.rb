@@ -1,4 +1,4 @@
-class ActiveSerializer::Serializer
+class ActiveSerializer::Serializers::StandardSerializer
   attr_reader :attrs
 
   def initialize(object, options = {})
@@ -57,7 +57,7 @@ class ActiveSerializer::Serializer
 
     target = object || @object
     Array.wrap(attrs).flatten.each do |attribute|
-      self.attrs[attribute] = target.send(attribute.to_s)
+      serialize_attribute(attribute, target)
     end
   end
 
@@ -75,9 +75,13 @@ class ActiveSerializer::Serializer
 
   protected
 
-  def nested_resource(name, object, options, &block)
+  def serialize_attribute(attribute, target)
+    self.attrs[attribute] = target.send(attribute.to_s)
+  end
+
+  def nested_resource(name, object, options, serializer_class = self.class, &block)
     return nil if !object
-    serializer = self.class.new(object, options)
+    serializer = serializer_class.new(object, options)
     if block_given?
       serializer.instance_exec(object, &block)
       serializer.attrs

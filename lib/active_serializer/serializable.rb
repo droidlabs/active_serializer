@@ -1,4 +1,6 @@
-require 'active_serializer/serializer'
+require 'active_serializer/serializers'
+require 'active_serializer/serializers/standard_serializer'
+require 'active_serializer/serializers/restrict_fields_serializer'
 
 module ActiveSerializer::Serializable
   extend ActiveSupport::Concern
@@ -6,10 +8,16 @@ module ActiveSerializer::Serializable
   module ClassMethods
     def serialize(*objects)
       first_object = objects.first
+      options = objects.last.is_a?(Hash) ? objects.last : {}
+
       serialization_options = self.class_variable_get(:@@serialization_options)
       serialization_rules   = self.class_variable_get(:@@serialization_rules)
 
-      serializer = ActiveSerializer::Serializer.new(first_object)
+      if options[:serializable_fields]
+        serializer = ActiveSerializer::Serializers::RestrictFieldsSerializer.new(first_object, options)
+      else
+        serializer = ActiveSerializer::Serializers::StandardSerializer.new(first_object, options)
+      end
       instance_exec do
         serializer.instance_exec(*objects, &serialization_rules)
       end
@@ -20,9 +28,9 @@ module ActiveSerializer::Serializable
       end
     end
 
-    def serialize_all(collection)
+    def serialize_all(collection, options = {})
       collection.map do |object|
-        serialize(object)
+        serialize(object, options)
       end
     end
 

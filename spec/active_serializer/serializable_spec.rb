@@ -99,6 +99,60 @@ describe ActiveSerializer::Serializable do
       serialized_contacts = ContactsSerializer.serialize([contact1, contact2], home_address)
       serialized_contacts.should be_an_instance_of(Array)
     end
+
+
+    class Company
+      attr_accessor :name, :emails, :address
+    end
+    class CompanySerializer
+      include ActiveSerializer::Serializable
+
+      serialization_rules do |company|
+        attributes :name
+        resource :address do |address|
+          attributes :country, :city, :street
+        end
+        resources :emails do |email|
+          attribute :email do
+            email.email
+          end
+        end
+      end
+    end
+
+    it "should serialize only fields spefied in serializable_fields option" do
+      company = Company.new
+      company.name = "MyCo"
+
+      email1 = Email.new
+      email1.email = 'test@test.com'
+      email2 = Email.new
+      email2.email = 'test2@test.com'
+      company.emails = [email1, email2]
+
+      address = Address.new
+      address.country = 'Russia'
+      address.city    = 'Kazan'
+      address.street  = 'Kosmonavton'
+      company.address = address
+
+      serialized_company = CompanySerializer.serialize(company, serializable_fields: { name: true, emails: { email: true}, address: { country: true }})
+      serialized_company.should =={
+        name: "MyCo",
+        address: {country: "Russia"},
+        emails: [
+          { email: "test@test.com"  },
+          { email: "test2@test.com" }
+        ]
+      }
+      serialized_company = CompanySerializer.serialize(company, serializable_fields: { emails: true})
+      serialized_company.should == {
+        emails: [
+          { email: "test@test.com"  },
+          { email: "test2@test.com" }
+        ]
+      }
+    end
   end
 end
 
