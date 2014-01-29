@@ -1,43 +1,35 @@
-require 'active_serializer/serializers'
-require 'active_serializer/serializers/standard_serializer'
-require 'active_serializer/serializers/restrict_fields_serializer'
-
 module ActiveSerializer::Serializable
-  extend ActiveSupport::Concern
 
-  module ClassMethods
-    def serialize(*objects)
-      first_object = objects.first
-      options = objects.last.is_a?(Hash) ? objects.last : {}
+  def serialize(*objects)
+    serialization_options = self.class_variable_get(:@@serialization_options)
+    serialization_rules   = self.class_variable_get(:@@serialization_rules)
+    ActiveSerializer::ArgsValidator.not_nil!(serialization_rules, :serialization_rules)
 
-      serialization_options = self.class_variable_get(:@@serialization_options)
-      serialization_rules   = self.class_variable_get(:@@serialization_rules)
+    serialized_data = run_serialization(objects, serialization_rules, serialization_options)
 
-      if options[:serializable_fields]
-        serializer = ActiveSerializer::Serializers::RestrictFieldsSerializer.new(first_object, options)
-      else
-        serializer = ActiveSerializer::Serializers::StandardSerializer.new(first_object, options)
-      end
-      instance_exec do
-        serializer.instance_exec(*objects, &serialization_rules)
-      end
-      if serialization_options[:no_root_node]
-        serializer.attrs.first[1]
-      else
-        serializer.attrs
-      end
+    if serialization_options[:no_root_node]
+      serialized_data.first[1]
+    else
+      serialized_data
     end
+  end
 
-    def serialize_all(collection, options = {})
-      collection.map do |object|
-        serialize(object, options)
-      end
+  def serialize_all(collection, options = {})
+    collection.map do |object|
+      serialize(object, options)
     end
+  end
 
-    def serialization_rules(options = {}, &block)
-      self.class_variable_set(:@@serialization_options, options)
-      self.class_variable_set(:@@serialization_rules, block)
-    end
+  def serialization_rules(options = {}, &block)
+    self.class_variable_set(:@@serialization_options, options)
+    ActiveSerializer::SerializationRulesValidator.validate!(&block)
+    self.class_variable_set(:@@serialization_rules, block)
+  end
+
+  private
+
+  def run_serialization(objects, serialization_rules, serialization_options)
+    raise NotImplementedError, "should be implemented in derived class"
   end
 
 end

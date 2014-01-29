@@ -1,4 +1,4 @@
-class ActiveSerializer::Serializers::RestrictFieldsSerializer < ActiveSerializer::Serializers::StandardSerializer
+class ActiveSerializer::Serializers::RestrictFieldsObjectSerializer < ActiveSerializer::Serializers::ObjectSerializer
   def initialize(object, options)
     raise ArgumentError, 'serializable_fields should be specified' unless options[:serializable_fields]
     super
@@ -29,7 +29,7 @@ class ActiveSerializer::Serializers::RestrictFieldsSerializer < ActiveSerializer
     if !serializable_fields
       return
     elsif serializable_fields == true
-      super(name, object, options, ActiveSerializer::Serializers::StandardSerializer, &block)
+      super(name, object, options, ActiveSerializer::Serializers::ObjectSerializer, &block)
     elsif serializable_fields.is_a?(Hash)
       options[:serializable_fields] = serializable_fields
       super(name, object, options, &block)

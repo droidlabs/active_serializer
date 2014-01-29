@@ -24,9 +24,22 @@ module ActiveSerializer::ArgsValidator
       end
     end
 
-    def block_given!(block)
+    def is_array_of_symbols!(array, obj_name)
+      is_array!(array, obj_name)
+      unless array.all? { |item| item.is_a?(Symbol) }
+        raise ArgumentError, "#{obj_name} elements should be a symbols"
+      end
+    end
+
+    def block_given!(block, obj_name)
       unless block
-        raise ArgumentError, "Block should be given"
+        raise ArgumentError, "Block should be given to #{obj_name}"
+      end
+    end
+
+    def not_nil!(obj, obj_name)
+      unless obj
+        raise ArgumentError, "#{obj_name} can not be nil"
       end
     end
   end

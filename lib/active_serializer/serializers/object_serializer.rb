@@ -1,4 +1,4 @@
-class ActiveSerializer::Serializers::StandardSerializer
+class ActiveSerializer::Serializers::ObjectSerializer
   attr_reader :attrs
 
   def initialize(object, options = {})
