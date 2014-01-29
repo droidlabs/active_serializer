@@ -68,6 +68,7 @@ module SerializableHashTest
         attributes :first_name, :last_name
 
         attribute :full_name
+        attribute(:address) if contact[:full_name]
       end
     end
 

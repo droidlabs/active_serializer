@@ -1,4 +1,4 @@
-module ActiveSerializer::ArgsValidator
+module ActiveSerializer::Support::ArgsValidator
   class << self
     def is_symbol!(obj, obj_name)
       unless obj.is_a?(Symbol)

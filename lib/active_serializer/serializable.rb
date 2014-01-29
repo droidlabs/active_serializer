@@ -3,7 +3,7 @@ module ActiveSerializer::Serializable
   def serialize(*objects)
     serialization_options = self.class_variable_get(:@@serialization_options)
     serialization_rules   = self.class_variable_get(:@@serialization_rules)
-    ActiveSerializer::ArgsValidator.not_nil!(serialization_rules, :serialization_rules)
+    ActiveSerializer::Support::ArgsValidator.not_nil!(serialization_rules, :serialization_rules)
 
     serialized_data = run_serialization(objects, serialization_rules, serialization_options)
 

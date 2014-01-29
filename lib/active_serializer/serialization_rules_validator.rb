@@ -2,31 +2,34 @@ class ActiveSerializer::SerializationRulesValidator
   private :initialize
 
   def self.validate!(&rules)
+    fake_objects = rules.arity.times.map do
+      ActiveSerializer::Support::FakeObject.new
+    end
     validator = self.new
-    validator.instance_exec(&rules)
+    validator.instance_exec(*fake_objects, &rules)
   end
 
   def attribute(name, value = nil, &block)
-    ActiveSerializer::ArgsValidator.is_symbol!(name, 'attributes')
+    ActiveSerializer::Support::ArgsValidator.is_symbol!(name, 'attributes')
   end
 
   def attributes(*attrs)
     attrs.delete_at(-1)
-    ActiveSerializer::ArgsValidator.is_array_of_symbols!(attrs, 'attributes')
+    ActiveSerializer::Support::ArgsValidator.is_array_of_symbols!(attrs, 'attributes')
   end
 
   def namespace(name, &block)
-    ActiveSerializer::ArgsValidator.is_symbol!(name, 'namespace name')
-    ActiveSerializer::ArgsValidator.block_given!(block, 'namespace block')
+    ActiveSerializer::Support::ArgsValidator.is_symbol!(name, 'namespace name')
+    ActiveSerializer::Support::ArgsValidator.block_given!(block, 'namespace block')
   end
 
   def resource(name, object = nil, &block)
-    ActiveSerializer::ArgsValidator.is_symbol!(name, 'resource name')
-    ActiveSerializer::ArgsValidator.block_given!(block, 'resource block')
+    ActiveSerializer::Support::ArgsValidator.is_symbol!(name, 'resource name')
+    ActiveSerializer::Support::ArgsValidator.block_given!(block, 'resource block')
   end
 
   def resources(name, objects = nil, &block)
-    ActiveSerializer::ArgsValidator.is_symbol!(name, 'resources name')
-    ActiveSerializer::ArgsValidator.block_given!(block, 'resources block')
+    ActiveSerializer::Support::ArgsValidator.is_symbol!(name, 'resources name')
+    ActiveSerializer::Support::ArgsValidator.block_given!(block, 'resources block')
   end
 end
