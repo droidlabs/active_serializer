@@ -7,7 +7,7 @@ Active Serializer is a simple objects to hash serializer.
 Here's an example serializer:
 ```ruby
 class ContactSerializer
-  include ActiveSerializer::Serializable
+  include ActiveSerializer::SerializableObject
 
   serialization_rules do |contact, home_address, contact_emails|
     attributes :first_name, :last_name, contact
