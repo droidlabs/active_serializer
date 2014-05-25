@@ -6,6 +6,19 @@ class ActiveSerializer::Serializers::ObjectSerializer
     @attrs = {}
   end
 
+  def serialize_collection(name, objects, klass, *args)
+    raise ArgumentError, "You should provide serializer klass" if !klass
+    self.attrs[name] = []
+    objects.each do |object|
+     self.attrs[name] << klass.serialize(object, *args)
+    end
+  end
+
+  def serialize_entity(name, object, klass, *args)
+    raise ArgumentError, "You should provide serializer klass" if !klass
+    self.attrs[name] = klass.serialize(object, *args)
+  end
+
   def namespace(name, &block)
     serializer = self.class.new(@object, @options)
     serializer.instance_exec(@object, &block)

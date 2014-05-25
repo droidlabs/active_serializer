@@ -13,6 +13,21 @@ class ActiveSerializer::SerializationRulesValidator
     ActiveSerializer::Support::ArgsValidator.is_symbol!(name, 'attributes')
   end
 
+  def serialize_collection(*attrs)
+    key    = attrs[0]
+    object = attrs[1]
+    klass  = attrs[2]
+    ActiveSerializer::Support::ArgsValidator.is_symbol!(key, 'collection name')
+    ActiveSerializer::Support::ArgsValidator.is_class!(klass, 'serializer class')
+  end
+
+  def serialize_entity(*attrs)
+    key    = attrs[0]
+    klass  = attrs[2]
+    ActiveSerializer::Support::ArgsValidator.is_symbol!(key, 'collection name')
+    ActiveSerializer::Support::ArgsValidator.is_class!(klass, 'serializer class')
+  end
+
   def attributes(*attrs)
     attrs.delete_at(-1)
     ActiveSerializer::Support::ArgsValidator.is_array_of_symbols!(attrs, 'attributes')

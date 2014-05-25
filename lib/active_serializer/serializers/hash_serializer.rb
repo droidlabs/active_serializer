@@ -16,6 +16,19 @@ class ActiveSerializer::Serializers::HashSerializer
     set_value(name, value)
   end
 
+  def serialize_collection(name, objects, klass, *args)
+    raise ArgumentError, "You should provide serializer klass" if !klass
+    self.serialized_data[name] = []
+    objects.each do |object|
+     self.serialized_data[name] << klass.serialize(object, *args)
+    end
+  end
+
+  def serialize_entity(name, object, klass, *args)
+    raise ArgumentError, "You should provide serializer klass" if !klass
+    self.serialized_data[name] = klass.serialize(object, *args)
+  end
+
   def attributes(*serialized_data, &block)
     if !serialized_data.last.is_a?(Symbol)
       source_hash = serialized_data.delete_at(-1)

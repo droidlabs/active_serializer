@@ -14,10 +14,22 @@ module SerializableObjectTest
       attr_accessor :email
     end
 
+    class PhoneNumber
+      attr_accessor :number
+    end
+
+    class PhoneNumbersSerializer
+      include ActiveSerializer::SerializableObject
+
+      serialization_rules do |phone_numbers|
+        attributes :number
+      end
+    end
+
     class ContactSerializer
       include ActiveSerializer::SerializableObject
 
-      serialization_rules do |contact, home_address, contact_emails|
+      serialization_rules do |contact, home_address, contact_emails, phone_numbers|
         attributes :first_name, :last_name, contact
 
         attribute :full_name do
@@ -27,6 +39,9 @@ module SerializableObjectTest
         resource :address, home_address do |address|
           attributes :country, :city, :street, address
         end
+
+        serialize_collection :phone_numbers, phone_numbers, PhoneNumbersSerializer
+        serialize_entity     :phone_number, phone_numbers.first, PhoneNumbersSerializer
 
         resources :emails, contact_emails do |email|
           attributes :email
@@ -54,7 +69,10 @@ module SerializableObjectTest
         home_address.city    = 'Kazan'
         home_address.street  = 'Kosmonavton'
 
-        serialized_contact = ContactSerializer.serialize(contact, home_address, contact_emails)
+        phone_number = PhoneNumber.new
+        phone_number.number = '123456'
+
+        serialized_contact = ContactSerializer.serialize(contact, home_address, contact_emails, [phone_number])
         serialized_contact.should == {
           first_name: "John",
           last_name: "Smith",
@@ -67,6 +85,14 @@ module SerializableObjectTest
           emails: [
             { email: "test@test.com", type: "home" },
             { email: "test2@test.com", type: "home" }
+          ],
+          phone_number: {
+            number: '123456'
+          },
+          phone_numbers: [
+            {
+              number: '123456'
+            }
           ]
         }
       end

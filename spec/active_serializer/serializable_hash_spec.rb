@@ -2,15 +2,26 @@ require 'spec_helper'
 
 module SerializableHashTest
   describe ActiveSerializer::SerializableHash do
+    class PhoneNumbersSerializer
+      include ActiveSerializer::SerializableHash
+
+      serialization_rules do |phone_numbers|
+        attributes :number
+      end
+    end
+
     class ContactSerializer
       include ActiveSerializer::SerializableHash
 
-      serialization_rules do |contact, home_address, contact_emails|
+      serialization_rules do |contact, home_address, contact_emails, phone_numbers|
         attributes :first_name, :last_name, contact
 
         attribute :full_name do
           "#{contact[:first_name]} #{contact[:last_name]}"
         end
+
+        serialize_collection :phone_numbers, phone_numbers, PhoneNumbersSerializer
+        serialize_entity :phone_number, phone_numbers.first, PhoneNumbersSerializer
 
         resource :address, home_address do |address|
           attributes :country, :city, :street, address
@@ -43,7 +54,13 @@ module SerializableHashTest
           street:  'Kosmonavton',
         }
 
-        serialized_contact = ContactSerializer.serialize(contact, home_address, contact_emails)
+        phone_numbers = [
+          {
+            number: '123456'
+          }
+        ]
+
+        serialized_contact = ContactSerializer.serialize(contact, home_address, contact_emails, phone_numbers)
         serialized_contact.should == {
           first_name: "John",
           last_name: "Smith",
@@ -56,7 +73,15 @@ module SerializableHashTest
           emails: [
             { email: "test@test.com", type: "home" },
             { email: "test2@test.com", type: "home" }
-          ]
+          ],
+          phone_numbers: [
+            {
+              number: '123456'
+            }
+          ],
+          phone_number: {
+            number: '123456'
+          }
         }
       end
     end

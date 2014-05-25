@@ -6,6 +6,12 @@ module ActiveSerializer::Support::ArgsValidator
       end
     end
 
+    def is_class!(obj, obj_name)
+      unless obj.is_a?(Class)
+        raise ArgumentError, "#{obj_name} should be a Class"
+      end
+    end
+
     def is_array!(obj, obj_name)
       unless obj.is_a?(Array)
         raise ArgumentError, "#{obj_name} should be an Array"
