@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'bundler/setup'
-require 'debugger'
+require 'byebug'
 require 'active_serializer'
 
 RSpec.configure do |config|
